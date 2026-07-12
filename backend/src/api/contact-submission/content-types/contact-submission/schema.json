@@ -1,0 +1,84 @@
+{
+    "kind": "collectionType",
+    "collectionName": "contact_submissions",
+    "info": {
+        "singularName": "contact-submission",
+        "pluralName": "contact-submissions",
+        "displayName": "Contact Submission",
+        "description": "Customer contact form submissions"
+    },
+    "options": {
+        "draftAndPublish": false
+    },
+    "pluginOptions": {
+        "content-manager": {
+            "visible": true
+        },
+        "content-type-builder": {
+            "visible": true
+        }
+    },
+    "attributes": {
+        "fullName": {
+            "type": "string",
+            "required": true
+        },
+        "email": {
+            "type": "email",
+            "required": true
+        },
+        "phone": {
+            "type": "string"
+        },
+        "subject": {
+            "type": "string",
+            "required": true
+        },
+        "inquiryType": {
+            "type": "enumeration",
+            "enum": [
+                "General",
+                "Support",
+                "Partnership",
+                "Feedback"
+            ]
+        },
+        "message": {
+            "type": "text",
+            "required": true
+        },
+        "status": {
+            "type": "enumeration",
+            "enum": [
+                "new",
+                "in-progress",
+                "resolved",
+                "spam"
+            ],
+            "default": "new",
+            "required": true
+        },
+        "adminEmailStatus": {
+            "type": "enumeration",
+            "enum": [
+                "pending",
+                "sent",
+                "failed"
+            ],
+            "default": "pending"
+        },
+        "userEmailStatus": {
+            "type": "enumeration",
+            "enum": [
+                "pending",
+                "sent",
+                "failed"
+            ],
+            "default": "pending"
+        },
+        "publicReference": {
+            "type": "string",
+            "unique": true
+        }
+    }
+}
