@@ -7,21 +7,16 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel"
+import { fetchStrapi, getStrapiImageUrl } from '@/app/lib/strapi'
 
 export const dynamic = 'force-dynamic'
 
 export default async function CarouselDemo() {
-  const strapiBaseUrl = process.env.NEXT_PUBLIC_STRAPI_URL || 'http://localhost:1337'
   let product = { data: [] }
-
   let fetchError = null
 
   try {
-    const res = await fetch(`${strapiBaseUrl}/api/products?populate=image`, { cache: 'no-store' })
-    if (!res.ok) {
-      throw new Error(`Strapi responded with ${res.status} ${res.statusText}`)
-    }
-    product = await res.json()
+    product = await fetchStrapi('/api/products?populate=image')
   } catch (error) {
     console.error('Failed to load products for homepage carousel', error)
     fetchError = error instanceof Error ? error.message : String(error)
@@ -33,7 +28,7 @@ export default async function CarouselDemo() {
         <div className="mx-auto max-w-3xl rounded-xl border border-red-300 bg-red-50 p-6 text-red-900 shadow-sm">
           <h2 className="text-xl font-semibold mb-2">Unable to load products</h2>
           <p className="text-sm leading-6">
-            The homepage product carousel could not connect to Strapi at <strong>{strapiBaseUrl}</strong>.
+            The homepage product carousel could not connect to Strapi at <strong>{process.env.NEXT_PUBLIC_STRAPI_URL || 'http://localhost:1337'}</strong>.
           </p>
           <p className="mt-2 text-sm">Reason: {fetchError}</p>
           <p className="mt-4 text-sm text-gray-700">
@@ -58,7 +53,7 @@ export default async function CarouselDemo() {
 
                       <div className="relative aspect-square w-full  bg-gray-300">
                         <img
-                          src={item.image?.url?.startsWith('http') ? item.image.url : `${strapiBaseUrl}${item.image?.url || ''}`}
+                          src={getStrapiImageUrl(item.image)}
                           alt={item.title}
                           className="  md:w-96 md:h-96 mx-auto rounded-lg transition-all duration-300 cursor-pointer mix-blend-multiply"
                         />

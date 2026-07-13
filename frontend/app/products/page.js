@@ -2,22 +2,15 @@ import React from 'react'
 
 import { Button } from '@/components/ui/button'
 import Link from 'next/link'
+import { fetchStrapi, getStrapiImageUrl } from '@/app/lib/strapi'
 
 export const dynamic = 'force-dynamic'
 
-const getImageUrl = (image) => {
-    if (!image) return ''
-    if (image.url?.startsWith('http')) return image.url
-    return `${process.env.NEXT_PUBLIC_STRAPI_URL || 'http://localhost:1337'}${image.url}`
-}
-
 const products = async () => {
-    const strapiBaseUrl = process.env.NEXT_PUBLIC_STRAPI_URL || 'http://localhost:1337'
     let products = { data: [] }
 
     try {
-        let res = await fetch(`${strapiBaseUrl}/api/products?populate=image`, { cache: 'no-store' })
-        products = await res.json()
+        products = await fetchStrapi('/api/products?populate=image')
     } catch (error) {
         console.error('Failed to load products from Strapi', error)
     }
@@ -38,7 +31,7 @@ const products = async () => {
                             return (
                                 <div key={item.id} className="xl:w-1/4 md:w-1/2 p-4  ">
                                     <div className="bg-gray-200 p-6 rounded-lg cursor-pointer h-[100%] sm:w-full">
-                                        <img className="h-72 rounded m-auto mb-6" src={getImageUrl(item.image)} alt={item.title} />
+                                        <img className="h-72 rounded m-auto mb-6" src={getStrapiImageUrl(item.image)} alt={item.title} />
                                         <h3 className="tracking-widest text-indigo-500 text-xs font-medium title-font">{item.category}</h3>
                                         <h2 className="text-lg text-gray-900 font-medium title-font mb-4">{item.title}  </h2>
                                         <div className='flex flex-wrap gap-3 mb-3 '>

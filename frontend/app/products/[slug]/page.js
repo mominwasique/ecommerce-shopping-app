@@ -3,13 +3,7 @@
 import React, { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { useCart } from '@/app/context/CartContext'
-
-const getImageUrl = (image) => {
-  if (!image) return ''
-  if (typeof image === 'string') return image
-  if (image.url?.startsWith('http')) return image.url
-  return `${process.env.NEXT_PUBLIC_STRAPI_URL || 'http://localhost:1337'}${image.url || ''}`
-}
+import { getStrapiImageUrl } from '@/app/lib/strapi'
 
 export default function Page({ params }) {
   const { slug } = React.use(params)
@@ -18,9 +12,14 @@ export default function Page({ params }) {
 
   useEffect(() => {
     const fetchProduct = async () => {
-      const res = await fetch(`http://localhost:1337/api/products?filters[slug][$eq]=${slug}&populate=image`, { cache: 'no-store' })
-      const data = await res.json()
-      setProduct(data.data?.[0] || null)
+      try {
+        const res = await fetch(`${process.env.NEXT_PUBLIC_STRAPI_URL || 'http://localhost:1337'}/api/products?filters[slug][$eq]=${slug}&populate=image`, { cache: 'no-store' })
+        const data = await res.json()
+        setProduct(data.data?.[0] || null)
+      } catch (error) {
+        console.error('Failed to fetch product details', error)
+        setProduct(null)
+      }
     }
 
     fetchProduct()
@@ -30,7 +29,7 @@ export default function Page({ params }) {
     return <div className="min-h-screen bg-slate-950 px-6 py-24 text-white">Loading...</div>
   }
 
-  const imageUrl = getImageUrl(product.image)
+  const imageUrl = getStrapiImageUrl(product.image)
 
   return (
     <div>
