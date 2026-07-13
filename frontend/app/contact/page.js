@@ -13,7 +13,7 @@ const inquiryOptions = [
 const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 const phonePattern = /^[+0-9().\s-]{7,30}$/
 
-const contactUs = () => {
+const ContactUsPage = () => {
     const [form, setForm] = React.useState({
         fullName: '',
         email: '',
@@ -110,7 +110,13 @@ const contactUs = () => {
                 }
             )
 
-            const result = await response.json()
+            let result = {}
+            try {
+                result = await response.json()
+            } catch (parseError) {
+                // Response is not valid JSON, use empty object as fallback
+                console.warn('Response is not valid JSON:', parseError)
+            }
 
             if (!response.ok) {
                 if (response.status === 422 && result.errors) {
@@ -359,4 +365,4 @@ const contactUs = () => {
     )
 }
 
-export default contactUs
+export default ContactUsPage
